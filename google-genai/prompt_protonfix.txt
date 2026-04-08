@@ -1,0 +1,69 @@
+### SYSTEM_CONTEXT
+- **Game_Title:** {game_title}
+- **TeknoParrot_Game_ID:** {game_id}
+- **Proton_Wine_Version:** {engine_version}
+
+### ERROR_DIAGNOSTICS
+- **Issue_Type:** Crash to start game
+- **Error_Message:** no message
+- **Current_Behavior:** game not launch
+
+### CURRENT_ENVIRONMENT
+- **Renderer used: ** {renderer}
+- **Installed_Dependencies from existing prefix:** 
+
+### TEMPLATE_PROTONFIX
+- **Instructions:**
+0. keep comments at the begining of the file (it's for information/description)
+1. keep all import/from
+2. use popup.Message() and popup.CleanLast() as in template to display a message during installation of dll/override/env variable... 
+3. if installation is estimated as long for util.protontricks, adapt second parameter of popup.message to display it more time (it's in seconds)
+4. for sure, the following file is an example, please update all verbs to propose the known dependencies as dll, overrides, env variables, if known for this game
+5. for "vcrun" parts, please keep one message by protontricks, to well see the progress as proposed in example
+6. everything is example, please not just recopy !
+7. don't hesitate to propose d3dcompiler to install/override, it's usual (don't let in comments if you know as needed)
+8. for vcrun, it's principally linked to year of edition of the game
+- **content structure to follow:
+[
+# for:
+# GAME NAME: {game_title}
+# GAME ID: {game_id}
+# to put here in your "share":
+# /recalbox/share/system/.config/protonfixes/{game_id}.py
+
+from protonfixes import util
+from protonfixes import log
+import os
+import configgen.utils.popup as popup #for pixL popup message
+
+def main():
+    """
+    Main function for applying TeknoParrot/SR3 specific fixes.
+    """
+    # Install dependencies
+    popup.Message("[GameFix] vcrun2010 installation/check...", 3*60) # usually a minimum of 3 minutes of display for this message
+    util.protontricks('vcrun2010')
+    popup.CleanLast()
+    popup.Message("[GameFix] vcrunXXXX installation/check...", 3*60) # usually a minimum of 3 minutes of display for this message
+    util.protontricks('vcrunXXXX')
+    popup.CleanLast()
+    
+    popup.Message("[GameFix] Direct 3D compilers installation/check...", 3*60) # usually a minimum  3 minutes of display for this message
+    util.protontricks('d3dcompiler_42')
+    util.winedll_override('d3dcompiler_42', 'n,b')
+    util.protontricks('d3dcompiler_XX')
+    util.winedll_override('d3dcompiler_XX', 'n,b' or 'b,n' or 'b' or 'n' or 'd')
+    popup.CleanLast()
+
+    popup.Message("[GameFix] set additional Dll overrides...", 1*60) # usually 1 minute of display for all averrides for this message
+    util.winedll_override('xxxxx', 'n,b')
+    popup.CleanLast()
+
+    popup.Message("[GameFix] set specific environement variables...", 1*60) # usually 1 minute of display for all averrides for this message
+    os.environ['XXXXXXXXXX'] = 'Y'
+    popup.CleanLast()
+]
+
+### REQUESTED_OUTPUT
+Please provide a pyhton script to use as protonfix from example described upper but for the game {game_title} launch by Teknoparrot using wine/proton {engine_version}
+in addition, explain simply what is done for this game and why, to have a contnet for readme 

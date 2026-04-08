@@ -2,11 +2,24 @@ import argparse
 import os
 import re
 import base64
-
 import importlib.util
 import subprocess
 import sys
-import os
+from datetime import datetime  # Added for timestamps
+
+def backup_if_exists(filename):
+    """
+    If file exists, rename it to filename-YYYYMMDD-HHMMSS.ext
+    """
+    if os.path.exists(filename):
+        name, ext = os.path.splitext(filename)
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        backup_name = f"{name}-{timestamp}{ext}"
+        try:
+            os.rename(filename, backup_name)
+            print(f"[*] Backup created: {backup_name}")
+        except OSError as e:
+            print(f"[!] Could not backup {filename}: {e}")
 
 def check_and_install_lib(package_name, import_name=None):
     """
@@ -139,7 +152,10 @@ def main():
         # Avoid overwriting if multiple blocks of same type exist
         if ext in used_extensions:
             filename = f"{args.out_prefix}_{len(used_extensions)}.{ext}"
-            
+        
+        # --- BACKUP STEP ---
+        backup_if_exists(filename)
+        
         with open(filename, "w") as f:
             f.write(code.strip())
         print(f"[+] Saved Code Block: {filename}")
@@ -147,7 +163,10 @@ def main():
 
     # 4. Save the "Clean" text (Instructions/Comments)
     clean_text = re.sub(r"```.*?```", "", full_text, flags=re.DOTALL).strip()
-    with open(f"{args.out_prefix}_README.txt", "w") as f:
+    # --- BACKUP STEP ---
+    filename = f"{args.out_prefix}_README.txt"
+    backup_if_exists(filename)
+    with open(filename, "w") as f:
         f.write(clean_text)
     print(f"[+] Saved Info: {args.out_prefix}_README.txt")
 

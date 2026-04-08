@@ -22,7 +22,9 @@
 5. for "vcrun" parts, please keep one message by protontricks, to well see the progress as proposed in example
 6. everything is example, please not just recopy !
 7. don't hesitate to propose d3dcompiler to install/override, it's usual (don't let in comments if you know as needed)
-8. for vcrun, it's principally linked to year of edition of the game
+8. for vcrun, it's principally linked to year of publishing of the game, vcrun after the date of publishing is not applicable usually
+9. don't let any command in comments it's not sure to be relevant
+10. don't let any example in comments
 - **content structure to follow:
 [
 # for:

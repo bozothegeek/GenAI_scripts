@@ -23,15 +23,10 @@ def check_and_install_lib(package_name, import_name=None):
     if spec is None:
         print(f"[*] {import_name} not found. Starting installation...")
         
-        # 2. Define the Recalbox user-writable path
-        # This ensures we don't hit "Read-only file system" errors
-        user_bin = "/recalbox/share/system/.local/bin"
-        
         try:
-            # 3. Execute pip install
-            # --user installs to /recalbox/share/system/.local on Recalbox
+            # 3. Execute pip install to install in /usr (especially for pixL ;-)
             subprocess.check_call([
-                sys.executable, "-m", "pip", "install", "--user", package_name
+                sys.executable, "-m", "pip", "install", "--prefix=/usr", package_name
             ])
             print(f"[+] {package_name} installed successfully.")
             
@@ -98,6 +93,9 @@ def main():
         final_prompt = prompt_content.format(**var_dict)
     except KeyError as e: return print(f"Error: Missing variable {e}")
 
+    #to work on unlock system (especilally for pixL)
+    os.system("mount -o remount,rw /")
+    
     # For the Gemini API, the package is 'google-genai' 
     # but the import test should be 'google.genai'
     if check_and_install_lib("google-genai", "google.genai"):

@@ -24,13 +24,13 @@ def check_and_install_lib(package_name, import_name=None):
         print(f"[*] {import_name} not found. Starting installation...")
         
         try:
-            # 3. Execute pip install to install in /usr (especially for pixL ;-)
+            # 2. Execute pip install to install in /usr (especially for pixL ;-)
             subprocess.check_call([
                 sys.executable, "-m", "pip", "install", "--prefix=/usr", package_name
             ])
             print(f"[+] {package_name} installed successfully.")
             
-            # 4. Refresh sys.path to include the new installation immediately
+            # 3. Refresh sys.path to include the new installation immediately
             # We look for the site-packages folder in .local
             import site
             user_site = site.getusersitepackages()
@@ -56,11 +56,12 @@ def main():
     # python3 google-genai.py \
     # --template "prompt_protonfix.txt" \
     # --api_key "$MY_API_KEY" \
-    # --out_prefix "$1" \
-    # --vars Title="$2" ID="$1" \
+    # --out_prefix "test" \
+    # --vars Title="game of test" ID="test_game" \
     # --file_vars logs="logs/wine.log"
+    
     # full example on one line : 
-    # python3 google-genai.py --template "prompt_protonfix.txt" --api_key "YOUR_KEY" --out_prefix "VT4" --vars game_title="Virtua Teniis 4" game_id="VT4" engine_version="GE-Proton9-27" renderer="dxvk 2.6"
+    # python3 google-genai.py --template "prompt_protonfix.txt" --api_key "$MY_API_KEY" --out_prefix "VT4" --vars game_title="Virtua Teniis 4" game_id="VT4" engine_version="GE-Proton9-27" renderer="dxvk 2.6"
 
     parser = argparse.ArgumentParser(description='Universal Gemini AI File & Media Generator')
     parser.add_argument('--template', required=True, help='Path to the .txt prompt template')
@@ -149,20 +150,6 @@ def main():
     with open(f"{args.out_prefix}_README.txt", "w") as f:
         f.write(clean_text)
     print(f"[+] Saved Info: {args.out_prefix}_README.txt")
-
-    # # 5. Process Binary/Image Content (if supported by the model response)
-    # # Note: Currently, Gemini returns images as parts in the response object
-    # if hasattr(response, 'candidates'):
-        # for i, candidate in enumerate(response.candidates):
-            # for j, part in enumerate(candidate.content.parts):
-                # if hasattr(part, 'inline_data'):
-                    # mime = part.inline_data.mime_type
-                    # ext = mime.split('/')[-1]
-                    # img_data = part.inline_data.data
-                    # img_filename = f"{args.out_prefix}_{i}_{j}.{ext}"
-                    # with open(img_filename, "wb") as f:
-                        # f.write(img_data)
-                    # print(f"[+] Saved Media: {img_filename}")
 
     # 5. Process Binary/Image Content (Robust Version)
     if hasattr(response, 'candidates') and response.candidates:
